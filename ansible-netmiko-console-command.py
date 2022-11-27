@@ -1,27 +1,23 @@
 import os
 from ansible.module_utils.basic import AnsibleModule
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_lines
 import logging
 import netmiko
 
-def install_config(module: AnsibleModule, connection: netmiko.ConnectHandler):
+def run_command(module: AnsibleModule, connection: netmiko.ConnectHandler):
     args = module.params
     results = {}
-    config_file = os.path.abspath(args['config_file'])
-    results['file'] = config_file
-    results['changed'] = False
-    logging.info("loading %s", config_file)
-    config_set = open(config_file).readlines()
+    command = args.get('command')
     try:
         if not connection.check_enable_mode():
             connection.enable()
-        connection.send_config_set(config_set,cmd_verify=True,error_pattern="% Invalid input")
-        results['changed'] = True
+        results['stdout']=connection.send_command(command).strip(connection.find_prompt())
     except Exception as err:
         logging.error("Exception: %s", err.message)
+        results['changed'] = False
         raise err
-    connection.save_config()
-    return results
 
+    return results
 
 def load(module: AnsibleModule):
     args = module.params
@@ -38,7 +34,7 @@ def load(module: AnsibleModule):
         logging.error("Exception: %s", err.message)
         raise err
 
-    results = install_config(module, connection)
+    results = run_command(module, connection)
 
     module.exit_json(**results)
 
@@ -48,7 +44,7 @@ def main():
         argument_spec=dict(
             host=dict(required=True),
             port=dict(required=True),
-            config_file=dict(required=True),
+            command=dict(required=True),
             device_type=dict(required=False, default='cisco_ios_telnet'),
             prompt=dict(required=True),
         ),
