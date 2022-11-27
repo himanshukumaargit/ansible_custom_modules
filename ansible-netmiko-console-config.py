@@ -59,3 +59,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+# set ANSIBLE_LIBRARY env variable to current file path
