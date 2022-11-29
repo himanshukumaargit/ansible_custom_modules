@@ -1,0 +1,19 @@
+---
+- name: run command via console
+  gather_facts: false
+  hosts: routers
+  connection: local
+  tasks:
+    - name: show version
+      ansible-netmiko-console-command:
+        host: "{{ansible_host}}"
+        port: "{{ansible_port}}"
+        device_type: 'cisco_ios_telnet'
+        command: show version
+        prompt:
+          - "Router.*"
+          - "R[0-9].*" 
+      register: command_output
+    - name: print
+      debug: 
+        var: command_output.stdout_lines     

@@ -1,0 +1,29 @@
+---
+- name: run command via jumphost
+  gather_facts: false
+  hosts: routers
+  connection: local
+  tasks:
+    - name: run commands
+      ansible_netmiko_execute_via_jumphost:
+              jumphost_ip: 192.168.158.200
+              jumphost_user: ubuntu
+              jumphost_password: ubuntu
+              jumphost_type: linux_ssh
+              jumphost_port: 22
+              device_ip: "{{ansible_host}}"
+              device_user: "{{ansible_user}}"
+              device_password: "{{ansible_password}}"
+              device_port: "{{ansible_port}}"
+              device_type: cisco_ios
+              device_commands: 
+                - show version              
+                - show ip interface brief
+              KexAlgorithms: diffie-hellman-group-exchange-sha1
+              StrictHostKeyChecking: false
+              HostKeyAlgorithms: ssh-rsa  
+      register: command_output
+
+    - name: print
+      debug: 
+        var: command_output.stdout_lines     

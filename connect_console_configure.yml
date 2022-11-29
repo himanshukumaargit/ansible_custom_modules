@@ -1,0 +1,17 @@
+---
+- name: run command via telnet
+  gather_facts: false
+  hosts: routers
+  connection: local
+  tasks:
+    - name: add loop100
+      ansible-netmiko-console-config:
+        host: "{{ansible_host}}"
+        port: "{{ansible_port}}"
+        device_type: 'cisco_ios_telnet'
+        config_file: ./config_lo100.conf
+        prompt:
+          - "Router.*"
+          - "R[0-9].*"
+
+
