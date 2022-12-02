@@ -38,7 +38,7 @@ def main(changed_cfg,original_cfg,stdout_,changes_to_file):
 
 if __name__ == '__main__':
     parser=argparse.ArgumentParser(prog='cisco ios config deltas generator',
-                                   description='compare 2 config deltas and return the deltas or difference between them',
+                                   description='compare 2 cisco config files and return the deltas or difference between them',
                                    )
     parser.add_argument('--original_cfg',help="Original Config File or Base Config File to compare")
     parser.add_argument('--changed_cfg',help="changed Config File to compare with original config")
